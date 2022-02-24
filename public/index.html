@@ -169,6 +169,20 @@
         }
 
     })
+    $(window).keydown(function(e){
+
+        console.log(e.key)
+        if (e.key == " ") {
+            if (!(push)){
+                console.log("push");
+                socket.emit('push', {"id":roomId, "name":name});
+                $(".push div").css("background-color", "#ffc680");
+                push = true;
+                $('.push_sound').get(0).play();
+            }
+
+        }
+    });
     $(".leave").click(function () {
         $(".login").css('display', 'block');
         $('.main').css('display', 'none');

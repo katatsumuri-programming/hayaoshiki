@@ -54,4 +54,4 @@ io.on('connection', function(socket){
         io.to(data["id"]).emit("reset", true);
     });
 });
-server.listen(5000);
+server.listen(process.env.PORT || 5000);

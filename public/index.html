@@ -173,6 +173,7 @@
         $(".login").css('display', 'block');
         $('.main').css('display', 'none');
         $('.user').remove();
+        host = false;
         console.log(host)
         socket.emit('leave', {"id":roomId, "host":host, "name":name});
     })

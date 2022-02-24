@@ -42,6 +42,7 @@ io.on('connection', function(socket){
         } else {
             io.to(data["id"]).emit('remove_user', {"name":data["name"]});
             socket.leave(data["id"]);
+            user_list[data["id"]].splice(user_list[data["id"]].indexOf(data["name"]), 1);
         }
 
     })

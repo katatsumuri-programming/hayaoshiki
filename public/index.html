@@ -1,0 +1,233 @@
+<head>
+ <title>早押し</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+Antique:wght@300&display=swap" rel="stylesheet">
+ <script src="/socket.io/socket.io.js"></script>
+ <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+ <meta charset="utf-8">
+</head>
+<body>
+
+<div class="login">
+ <p><p class="room_name">部屋名</p><input type="text" class="room" maxlength="15"></p>
+ <p><p class="room_name">参加名</p><input type="text" class="name" maxlength="15"></p>
+ <button type="button" class="next">参加</button>
+</div>
+
+<div class="main">
+ <button type="button" class="push"><div>push</div></button>
+ <audio class="push_sound"><source src="https://res.cloudinary.com/dtsetxfcq/video/upload/v1645708742/hayaoshi/buzzer_ugod3q.mp3" type="audio/mp3"></audio>
+ <h1 class="room_name"></h1>
+ <div class="user_list">
+
+</div>
+ <button type="button" class="correct">正解</button>
+ <audio class="correct_sound"><source src="https://res.cloudinary.com/dtsetxfcq/video/upload/v1645708271/hayaoshi/correct_z6s3gf.mp3" type="audio/mp3"></audio>
+ <button type="button" class="incorrect">不正解</button>
+ <audio class="incorrect_sound"><source src="https://res.cloudinary.com/dtsetxfcq/video/upload/v1645708271/hayaoshi/incorrect_nlgra8.mp3" type="audio/mp3"></audio>
+ <button type="button" class="reset">リセット</button>
+ <button type="button" class="leave">終了</button>
+</div>
+ <style type="text/css">
+     input {
+         font-size: 40px;
+         border-radius:10px;
+         border: solid 1px #777;
+         display:flex;
+         margin: auto;
+     }
+     h2 {
+         margin: 0;
+     }
+     .correct {
+         display:none;
+     }
+     .incorrect {
+         display:none;
+     }
+     .reset {
+         display:none;
+     }
+     .user {
+         border: 3px solid #000;
+         width: 300px;
+         border-radius: 10px;
+         float: left;
+         padding: 30px;
+         margin: 30px;
+         font-family: 'Zen Kaku Gothic Antique', sans-serif;
+     }
+     .user_list::after {
+         visibility: hidden;
+         display: block;
+         content: " ";
+         clear: both;
+         height: 0;
+     }
+     .main {
+         display:none; /*none*/
+     }
+     audio {
+         display:none;
+     }
+     .ranking {
+         margin: 0;
+         margin-left: -70px;
+         margin-top: -80px;
+         width: 80px;
+         height:20px;
+         padding: 35px 0 25px 0;
+         text-align: center;
+         background-image: url("https://res.cloudinary.com/dtsetxfcq/image/upload/v1645707360/hayaoshi/kanmuri_ubn3iq.png");
+         background-size: 80px 80px;
+     }
+
+     .room_name {
+         width: 100%;
+         text-align: center;
+         font-family: 'Zen Kaku Gothic Antique', sans-serif;
+         font-size:45px;
+         width: 40%;
+         margin-left: 30%;
+         background:linear-gradient(transparent 70%, #FFFF00 0%);
+
+     }
+     button {
+         display: flex;
+         margin: auto;
+         background: none;
+         border: none;
+         font-size: 30px;
+         padding: 20px 30px 20px 30px;
+         border-radius: 10px;
+         color: #fff;
+         margin-top: 30px;
+         cursor: pointer;
+     }
+     .leave {
+        background-color: orange;
+     }
+     .correct {
+         background-color:tomato;
+     }
+     .incorrect {
+         background-color: royalblue;
+     }
+     .reset {
+         background-color:limegreen;
+     }
+     .push div {
+        box-sizing: content-box;
+         background-color: #ff8c00;
+         width: 200px;
+         height: 200px;
+         border-radius: 50%;
+         text-align: center;
+         padding: 0;
+         line-height: 200px;
+     }
+
+     .next {
+         background-color: blue;
+     }
+ </style>
+
+ <script type="text/javascript">
+
+    var socket = io();
+    var roomId = "";
+    var host = false;
+    var name = "";
+    var push = false;
+    var name_list = [];
+    var ranking = 0;
+    $('.next').click(function () {
+        roomId = $(".room").val();
+        name = $(".name").val();
+        $(".room_name").text(roomId);
+        $(".login").css('display', 'none');
+        $('.main').css('display', 'block');
+        socket.emit('createroom', {"id":roomId, "name":name});
+    })
+    $(".push").click(function () {
+       if (!(push)){
+           console.log("push");
+           socket.emit('push', {"id":roomId, "name":name});
+           $(".push div").css("background-color", "#ffc680");
+           push = true;
+           $('.push_sound').get(0).play();
+        }
+
+    })
+    $(".leave").click(function () {
+        $(".login").css('display', 'block');
+        $('.main').css('display', 'none');
+        $('.user').remove();
+        console.log(host)
+        socket.emit('leave', {"id":roomId, "host":host, "name":name});
+    })
+    $(window).on("beforeunload", function() {
+        socket.emit('leave', {"id":roomId, "host":host, "name":name});
+        console.log(host)
+
+    })
+    $(".reset").click(function () {
+        socket.emit('reset', {"id":roomId});
+
+    });
+    $(".correct").click(function () {
+        $(".correct_sound").get(0).play();
+    });
+    $(".incorrect").click(function () {
+        $(".incorrect_sound").get(0).play();
+    })
+    socket.on('push_user', function(data){
+        $(`#${data["name"]}`).css("border", "3px solid #f00");
+        ranking++;
+        $(`#${data["name"]} h2`).before(`<p class="ranking">${ranking}</p>`)
+        console.log(data);
+    });
+
+    socket.on('host', function(data){
+
+        host = data;
+        console.log(host);
+        if (host) {
+            $(".correct").css("display", "block");
+            $(".incorrect").css("display", "block");
+            $(".reset").css("display", "block");
+        }
+    })
+    socket.on('delete', function(data){
+        $(".login").css('display', 'block');
+        $('.main').css('display', 'none');
+        $('.user').remove();
+    })
+    socket.on('add_user', function(data){
+        $(".user_list").append(`<div class="user" id="${data["name"]}"><h2>${data["name"]}</h2></div>`)
+        console.log(data["name"]);
+        //name_list.push(data["name"]);
+    })
+    socket.on('remove_user', function(data){
+        $(`#${data["name"]}`).remove();
+        console.log(data["name"]);
+        //name_list.splice(name_list.indexOf(data["name"]), 1);
+    })
+    socket.on('reset', function(data){
+        console.log("reset");
+        $('.user').css("border", "3px solid #000");
+        $('.ranking').remove();
+        $(".push div").css("background-color", "#ff8c00");
+        push = false;
+        ranking = 0;
+    });
+    socket.on('user_list', function(data){
+        for (var i = 0; i < data.length; i++) {
+            console.log(data[i])
+            $(".user_list").append(`<div class="user" id="${data[i]}"><h2>${data[i]}</h2></div>`)
+        }
+    });
+ </script>
+
+</body>

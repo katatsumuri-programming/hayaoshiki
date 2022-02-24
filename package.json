@@ -4,7 +4,8 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node script.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +16,5 @@
   "engines": {
     "node": "16.14.0",
     "npm": "8.3.1"
-  }
+  },
 }

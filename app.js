@@ -8,11 +8,9 @@ var user_list = {}
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
-io.configure(function () {
-    io.set("transports", ["xhr-polling"]);
-    io.set("polling duration", 10);
-  });
+
 io.on('connection', function(socket){
+
     socket.on('createroom', function(data){
 
         if (!(room.includes(data["id"]))) {
@@ -56,4 +54,4 @@ io.on('connection', function(socket){
         io.to(data["id"]).emit("reset", true);
     });
 });
-server.listen(3000);
+server.listen(5000);

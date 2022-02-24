@@ -10,8 +10,8 @@
 <body>
 
 <div class="login">
- <p><p class="room_name">部屋名</p><input type="text" class="room" maxlength="15"></p>
- <p><p class="room_name">参加名</p><input type="text" class="name" maxlength="15"></p>
+ <p><p class="title">部屋名</p><input type="text" class="room" maxlength="15"></p>
+ <p><p class="title">参加名</p><input type="text" class="name" maxlength="15"></p>
  <button type="button" class="next">参加</button>
 </div>
 
@@ -30,6 +30,15 @@
  <button type="button" class="leave">終了</button>
 </div>
  <style type="text/css">
+     .title {
+        width: 100%;
+         text-align: center;
+         font-family: 'Zen Kaku Gothic Antique', sans-serif;
+         font-size:45px;
+         width: 40%;
+         margin-left: 30%;
+         background:linear-gradient(transparent 70%, #FFFF00 0%);
+     }
      input {
          font-size: 40px;
          border-radius:10px;

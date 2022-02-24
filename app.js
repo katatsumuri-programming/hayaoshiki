@@ -56,4 +56,4 @@ io.on('connection', function(socket){
         io.to(data["id"]).emit("reset", true);
     });
 });
-server.listen(5000);
+server.listen(3000);

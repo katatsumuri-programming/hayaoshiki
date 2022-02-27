@@ -6,6 +6,7 @@
  <script src="/socket.io/socket.io.js"></script>
  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
  <link rel="icon" href="https://res.cloudinary.com/dtsetxfcq/image/upload/v1645969120/hayaoshi/favicon_xio3ep.ico">
+ <meta http-equiv="content-language" content="ja">
  <meta charset="utf-8">
 </head>
 <body>
@@ -17,6 +18,7 @@
 </div>
 
 <div class="main">
+ <div class="link"><img src=""><p>部屋のリンクをコピー</p></div>
  <button type="button" class="push"><div>push</div></button>
  <audio class="push_sound"><source src="https://res.cloudinary.com/dtsetxfcq/video/upload/v1645708742/hayaoshi/buzzer_ugod3q.mp3" type="audio/mp3"></audio>
  <h1 class="room_name"></h1>
@@ -29,6 +31,12 @@
  <audio class="incorrect_sound"><source src="https://res.cloudinary.com/dtsetxfcq/video/upload/v1645708271/hayaoshi/incorrect_nlgra8.mp3" type="audio/mp3"></audio>
  <button type="button" class="reset">リセット</button>
  <button type="button" class="leave">終了</button>
+</div>
+<div class="popup_back">
+<div class="newroom_popup">
+ <p>新しい部屋を作成しました</p>
+ <button type="button" class="ok">OK</button>
+</div>
 </div>
  <style type="text/css">
      .title {
@@ -127,6 +135,10 @@
      .reset {
          background-color:limegreen;
      }
+     .ok {
+
+         background-color: #48d1cc;
+     }
      .push div {
         box-sizing: content-box;
          background-color: #ff8c00;
@@ -140,6 +152,47 @@
 
      .next {
          background-color: blue;
+     }
+     .newroom_popup p {
+        font-family: 'Zen Kaku Gothic Antique', sans-serif;
+         font-size: 45px;
+         text-align: center;
+         width: 100%;
+     }
+     .newroom_popup {
+         position: absolute;
+         width: 60%;
+         left: 15%;
+         top: 15%;
+         background-color: #fff;
+         padding: 5%;
+         border-radius: 30px;
+     }
+     .popup_back {
+         width: 100%;
+         height: 100%;
+         background-color: rgba(0,0,0,0.1);
+         position: absolute;
+         top: 0;
+         left: 0;
+         display:none;
+     }
+     .link {
+         position: absolute;
+         top: 20px;
+         right: 80px;
+         cursor: pointer;
+         font-size: 20px;
+         padding: 20px;
+         display: none;
+     }
+     .link p {
+         margin: 0;
+     }
+     .link:active {
+         background-color: #87ceeb;
+         border-radius: 15px;
+         color: #fff;
      }
  </style>
 
@@ -175,11 +228,13 @@
         //console.log(e.key)
         if (e.key == " ") {
             if (!(push)){
-                //console.log("push");
-                socket.emit('push', {"id":roomId, "name":name});
-                $(".push div").css("background-color", "#ffc680");
-                push = true;
-                $('.push_sound').get(0).play();
+                if (!(host)){
+                    //console.log("push");
+                    socket.emit('push', {"id":roomId, "name":name});
+                    $(".push div").css("background-color", "#ffc680");
+                    push = true;
+                    $('.push_sound').get(0).play();
+                }
             }
             return false;
 
@@ -190,6 +245,7 @@
         $('.main').css('display', 'none');
         $('.user').remove();
         $(".push").css('display', 'block');
+        $(".link").css('display', 'none');
 
         //console.log(host)
         socket.emit('leave', {"id":roomId, "host":host, "name":name});
@@ -209,6 +265,9 @@
     });
     $(".incorrect").click(function () {
         $(".incorrect_sound").get(0).play();
+    });
+    $(".ok").click(function () {
+        $(".popup_back").css("display","none");
     })
     socket.on('push_user', function(data){
         $(`#${data["name"]}`).css("border", "3px solid #f00");
@@ -226,6 +285,8 @@
             $(".incorrect").css("display", "block");
             $(".reset").css("display", "block");
             $(".push").css("display", "none");
+            $(".popup_back").css("display", "block");
+            $(".link").css("display","block");
         }
     })
     socket.on('delete', function(data){
@@ -257,6 +318,24 @@
             $(".user_list").append(`<div class="user" id="${data[i]}"><h2>${data[i]}</h2></div>`)
         }
     });
+    var url = new URL(window.location.href);
+    var param = url.searchParams.get("room")
+    console.log(param)
+    if (param) {
+        $(".room").val(param);
+    }
+    $(".link").click(function () {
+        url.searchParams.append('room',roomId);
+        var clipboard = $('<textarea></textarea>');
+        clipboard.text(url);
+        $('body').append(clipboard);
+        // 選択状態にする
+        clipboard.select();
+        // WebExtension APIのブラウザ拡張の仕組みを呼び出しクリップボードにコピー
+        document.execCommand('copy');
+        // 不要なテキストエリアを削除
+        clipboard.remove();
+    })
  </script>
 
 </body>

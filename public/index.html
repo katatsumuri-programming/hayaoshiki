@@ -161,7 +161,7 @@
     })
     $(".push").click(function () {
        if (!(push)){
-           console.log("push");
+           //console.log("push");
            socket.emit('push', {"id":roomId, "name":name});
            $(".push div").css("background-color", "#ffc680");
            push = true;
@@ -171,15 +171,16 @@
     })
     $(window).keydown(function(e){
 
-        console.log(e.key)
+        //console.log(e.key)
         if (e.key == " ") {
             if (!(push)){
-                console.log("push");
+                //console.log("push");
                 socket.emit('push', {"id":roomId, "name":name});
                 $(".push div").css("background-color", "#ffc680");
                 push = true;
                 $('.push_sound').get(0).play();
             }
+            return false;
 
         }
     });
@@ -187,14 +188,15 @@
         $(".login").css('display', 'block');
         $('.main').css('display', 'none');
         $('.user').remove();
+        $(".push").css('display', 'block');
 
-        console.log(host)
+        //console.log(host)
         socket.emit('leave', {"id":roomId, "host":host, "name":name});
         host = false;
     })
     $(window).on("beforeunload", function() {
         socket.emit('leave', {"id":roomId, "host":host, "name":name});
-        console.log(host)
+        //console.log(host)
 
     })
     $(".reset").click(function () {
@@ -211,17 +213,18 @@
         $(`#${data["name"]}`).css("border", "3px solid #f00");
         ranking++;
         $(`#${data["name"]} h2`).before(`<p class="ranking">${ranking}</p>`)
-        console.log(data);
+        //console.log(data);
     });
 
     socket.on('host', function(data){
 
         host = data;
-        console.log(host);
+        //console.log(host);
         if (host) {
             $(".correct").css("display", "block");
             $(".incorrect").css("display", "block");
             $(".reset").css("display", "block");
+            $(".push").css("display", "none");
         }
     })
     socket.on('delete', function(data){
@@ -231,16 +234,16 @@
     })
     socket.on('add_user', function(data){
         $(".user_list").append(`<div class="user" id="${data["name"]}"><h2>${data["name"]}</h2></div>`)
-        console.log(data["name"]);
+        //console.log(data["name"]);
         //name_list.push(data["name"]);
     })
     socket.on('remove_user', function(data){
         $(`#${data["name"]}`).remove();
-        console.log(data["name"]);
+        //console.log(data["name"]);
         //name_list.splice(name_list.indexOf(data["name"]), 1);
     })
     socket.on('reset', function(data){
-        console.log("reset");
+        //console.log("reset");
         $('.user').css("border", "3px solid #000");
         $('.ranking').remove();
         $(".push div").css("background-color", "#ff8c00");
@@ -249,7 +252,7 @@
     });
     socket.on('user_list', function(data){
         for (var i = 0; i < data.length; i++) {
-            console.log(data[i])
+            //console.log(data[i])
             $(".user_list").append(`<div class="user" id="${data[i]}"><h2>${data[i]}</h2></div>`)
         }
     });

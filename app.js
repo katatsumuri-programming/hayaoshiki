@@ -14,14 +14,14 @@ io.on('connection', function(socket){
     socket.on('createroom', function(data){
 
         if (!(room.includes(data["id"]))) {
-            console.log('newroom');
+            //console.log('newroom');
             socket.join(data["id"]);
             room.push(data["id"]);
             user_list[data["id"]] = []
             io.to(socket.id).emit("host", true);
 
         } else {
-            console.log("longin")
+            //console.log("longin")
             socket.join(data["id"]);
             io.to(socket.id).emit("host", false);
             io.to(socket.id).emit("user_list", user_list[data["id"]]);
@@ -32,8 +32,8 @@ io.on('connection', function(socket){
 
     })
     socket.on('leave', function(data){
-        console.log("leave")
-        console.log(data["name"])
+        //console.log("leave")
+        //console.log(data["name"])
         if (data["host"]) {
             io.to(data["id"]).emit('delete', {"id": data["id"]});
             socket.leave(data["id"]);
@@ -47,11 +47,11 @@ io.on('connection', function(socket){
 
     })
     socket.on('push', function(data){
-        console.log("push");
+        //console.log("push");
         io.to(data["id"]).emit('push_user', {"name": data["name"]});
     });
     socket.on('reset', function(data){
-        console.log("reset");
+        //console.log("reset");
         io.to(data["id"]).emit("reset", true);
     });
 });

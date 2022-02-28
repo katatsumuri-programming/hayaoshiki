@@ -18,7 +18,7 @@
 </div>
 
 <div class="main">
- <div class="link"><img src=""><p>部屋のリンクをコピー</p></div>
+ <div class="link"><img src="https://res.cloudinary.com/dtsetxfcq/image/upload/v1646052227/hayaoshi/link_icon_wwfoqq.png"><p>部屋のリンクをコピー</p></div>
  <button type="button" class="push"><div>push</div></button>
  <audio class="push_sound"><source src="https://res.cloudinary.com/dtsetxfcq/video/upload/v1645708742/hayaoshi/buzzer_ugod3q.mp3" type="audio/mp3"></audio>
  <h1 class="room_name"></h1>
@@ -177,22 +177,29 @@
          left: 0;
          display:none;
      }
-     .link {
+     .link p {
          position: absolute;
          top: 20px;
          right: 80px;
-         cursor: pointer;
+
          font-size: 20px;
          padding: 20px;
-         display: none;
+     }
+     .link img {
+        cursor: pointer;
      }
      .link p {
          margin: 0;
-     }
-     .link:active {
-         background-color: #87ceeb;
+         background-color: #c0c0c0;
          border-radius: 15px;
          color: #fff;
+         display: none;
+     }
+     .link img {
+         position: absolute;
+         right: 80px;
+         top: 25px;
+         width:50px;
      }
  </style>
 
@@ -212,6 +219,8 @@
         $(".login").css('display', 'none');
         $('.main').css('display', 'block');
         socket.emit('createroom', {"id":roomId, "name":name});
+        url.searchParams.set('room',roomId);
+        window.history.pushState(null, null, url);
     })
     $(".push").click(function () {
        if (!(push)){
@@ -325,7 +334,8 @@
         $(".room").val(param);
     }
     $(".link").click(function () {
-        url.searchParams.append('room',roomId);
+        url.searchParams.set('room',roomId);
+        window.history.pushState(null, null, url);
         var clipboard = $('<textarea></textarea>');
         clipboard.text(url);
         $('body').append(clipboard);
@@ -335,6 +345,8 @@
         document.execCommand('copy');
         // 不要なテキストエリアを削除
         clipboard.remove();
+        $(".link p").show('normal');
+        setTimeout(function() {$(".link p").hide('normal');}, 2000)
     })
  </script>
 

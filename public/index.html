@@ -252,11 +252,7 @@
 
         } else if (e.key == "r") {
             if (host) {
-                $('.user').css("border", "3px solid #000");
-                $('.ranking').remove();
-                $(".push div").css("background-color", "#ff8c00");
-                push = false;
-                ranking = 0;
+                socket.emit('reset', {"id":roomId});
             }
         } else if (e.key == "y") {
             if (host) {
